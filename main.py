@@ -1,22 +1,20 @@
 import pygame
 import json
-import os
-
+import audio
 import start_screen
 import end_screen
 import game
+from utils import resource_path, highscore_path
 
-HIGHSCORE_FILE = "highscore.json"
+HIGHSCORE_FILE = highscore_path()
 
 
 def load_highscore() -> int:
-    if os.path.exists(HIGHSCORE_FILE):
-        try:
-            with open(HIGHSCORE_FILE, "r") as f:
-                return int(json.load(f).get("highscore", 0))
-        except Exception:
-            pass
-    return 0
+    try:
+        with open(HIGHSCORE_FILE, "r") as f:
+            return int(json.load(f).get("highscore", 0))
+    except Exception:
+        return 0
 
 
 def save_highscore(score: int):
@@ -26,31 +24,33 @@ def save_highscore(score: int):
 
 def main():
     pygame.init()
+    pygame.mixer.init()
     screen = pygame.display.set_mode((1280, 800), pygame.RESIZABLE)
     pygame.display.set_caption("Stay in Lane")
     clock = pygame.time.Clock()
 
+    pygame.mixer.music.load(resource_path("soundtrack.ogg"))
+    pygame.mixer.music.play(loops=-1)
+
+    btn_sfx = pygame.mixer.Sound(resource_path("designed, braam, synth, braams, brahm, resonant chorus bass (c) 01.wav"))
+    audio.init(btn_sfx)
+
     highscore = load_highscore()
 
     while True:
-        # ---- STARTSCHERM ----
         start = start_screen.show(screen, clock, highscore)
         if not start:
-            break  # venster gesloten
+            break
 
-        # ---- GAME ----
         score = game.run(screen, clock)
 
-        # ---- HIGHSCORE BIJWERKEN ----
         if score > highscore:
             highscore = score
             save_highscore(highscore)
 
-        # ---- EINDSCHERM ----
         result = end_screen.show(screen, clock, score, highscore)
         if result == "quit":
             break
-        # result == "restart" -> loop terug naar startscherm
 
     pygame.quit()
 
