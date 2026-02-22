@@ -5,7 +5,7 @@ import audio
 from obstacle import Obstacle
 from utils import resource_path
 
-achtergrond = pygame.image.load(resource_path("bg.png"))
+achtergrond = pygame.image.load(resource_path("logo.png"))
 
 FIELD_HEIGHT_RATIO = 0.99
 FIELD_ASPECT       = 9 / 16
