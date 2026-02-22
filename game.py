@@ -5,6 +5,8 @@ import audio
 from obstacle import Obstacle
 from utils import resource_path
 
+achtergrond = pygame.image.load(resource_path("bg.png"))
+
 FIELD_HEIGHT_RATIO = 0.99
 FIELD_ASPECT       = 9 / 16
 
@@ -143,6 +145,8 @@ def run(screen, clock):
         trail = [pt for pt in trail if pt[1] < field_h + 20]
 
         screen.fill((20, 20, 20))
+        bg_scaled = pygame.transform.scale(achtergrond, (screen_width, screen_height))
+        screen.blit(bg_scaled, (0, 0))
         field_surface = pygame.Surface((field_w, field_h))
         road_img = pygame.transform.scale(genera.road_pic, (field_w, field_h))
         field_surface.blit(road_img, (0, road_offset - field_h))
@@ -159,12 +163,11 @@ def run(screen, clock):
             pygame.draw.line(line_surf, (200, 200, 255, speed_alpha), (field_w - 4, y_base), (field_w - 4, y_base + line_len), SPEED_LINE_WIDTH)
         field_surface.blit(line_surf, (0, 0))
 
-        # spawn — genoeg ruimte zodat motor er altijd tussen past op de y-as
+        # spawn — altijd minstens 1 vrije lane
         obs_h = int(field_h * OBS_SIZE)
         obs_w = obs_h
         spawn_timer += speed
         if spawn_timer > spawn_distance:
-            # safety_margin = 1 motor hoogte + 1 obstacle hoogte + extra marge
             safety_margin = player_h + obs_h + int(field_h * 0.08)
             occupied   = {obs.lane_index for obs in obstacles if obs.y < player_field_y + safety_margin}
             free_lanes = [l for l in range(3) if l not in occupied]
@@ -282,7 +285,7 @@ def run(screen, clock):
             if mute_rect.collidepoint(event.pos):
                 audio.toggle()
 
-        speed += 0.001
+        speed += 0.002
         pygame.display.flip()
 
     audio.unregister_game_sounds()

@@ -42,15 +42,16 @@ def main():
         if not start:
             break
 
-        score = game.run(screen, clock)
+        while True:
+            score = game.run(screen, clock)
 
-        if score > highscore:
-            highscore = score
-            save_highscore(highscore)
+            if score > highscore:
+                highscore = score
+                save_highscore(highscore)
 
-        result = end_screen.show(screen, clock, score, highscore)
-        if result == "quit":
-            break
+            result = end_screen.show(screen, clock, score, highscore)
+            if result == "quit":
+                break
 
     pygame.quit()
 
