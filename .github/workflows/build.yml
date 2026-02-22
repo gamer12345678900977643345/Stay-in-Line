@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build Game
 
 on:
   push:
@@ -51,3 +51,49 @@ jobs:
         with:
           name: StayInLane-Windows
           path: dist/StayInLane.exe
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pygame pyinstaller
+
+      - name: Build Mac app
+        run: |
+          python -m PyInstaller --onefile --windowed --name StayInLane \
+            --add-data "audio.py:." \
+            --add-data "road.png:." \
+            --add-data "motor.png:." \
+            --add-data "auto_baluw.png:." \
+            --add-data "auto_groen.png:." \
+            --add-data "auto_paars.png:." \
+            --add-data "auto_rood.png:." \
+            --add-data "truck_blauw.png:." \
+            --add-data "truck_groen.png:." \
+            --add-data "truck_paars.png:." \
+            --add-data "truck_rood.png:." \
+            --add-data "logo.png:." \
+            --add-data "game over.png:." \
+            --add-data "trofee.png:." \
+            --add-data "mute.png:." \
+            --add-data "unmute.png:." \
+            --add-data "soundtrack.ogg:." \
+            --add-data "engine.ogg:." \
+            --add-data "crash.ogg:." \
+            --add-data "DejaVuSansMono-Bold.ttf:." \
+            --add-data "designed, braam, synth, braams, brahm, resonant chorus bass (c) 01.wav:." \
+            main.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: StayInLane-Mac
+          path: dist/StayInLane
