@@ -7,9 +7,9 @@ trophy_img     = pygame.image.load(resource_path("trofee.png"))
 
 
 def show(screen, clock, score: int, highscore: int) -> str:
-    font_score = pygame.font.SysFont("ocraextended", 52)
-    font_sub   = pygame.font.SysFont("ocraextended", 36)
-    font_small = pygame.font.SysFont("ocraextended", 28)
+    font_score = pygame.font.Font(resource_path("DejaVuSansMono-Bold.ttf"), 52)
+    font_sub   = pygame.font.Font(resource_path("DejaVuSansMono-Bold.ttf"), 36)
+    font_small = pygame.font.Font(resource_path("DejaVuSansMono-Bold.ttf"), 28)
 
     is_new_record = score >= highscore and score > 0
 
@@ -68,7 +68,7 @@ def show(screen, clock, score: int, highscore: int) -> str:
         btn_color = (60, 120, 220) if btn_rect.collidepoint(mouse_pos) else (40, 80, 180)
         pygame.draw.rect(screen, btn_color, btn_rect, border_radius=10)
         pygame.draw.rect(screen, (100, 160, 255), btn_rect, 2, border_radius=10)
-        btn_surf = font_sub.render("RESTART  /  SPACE", True, (255, 255, 255))
+        btn_surf = font_sub.render("RESTART/SPACE", True, (255, 255, 255))
         screen.blit(btn_surf, btn_surf.get_rect(center=btn_rect.center))
 
         mute_rect = audio.draw_mute_btn(screen)

@@ -42,6 +42,7 @@ jobs:
             --add-data "soundtrack.ogg;." `
             --add-data "engine.ogg;." `
             --add-data "crash.ogg;." `
+            --add-data "DejaVuSansMono-Bold.ttf;." `
             --add-data "designed, braam, synth, braams, brahm, resonant chorus bass (c) 01.wav;." `
             main.py
 

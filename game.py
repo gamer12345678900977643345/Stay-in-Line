@@ -13,7 +13,7 @@ LANE_HYSTERESIS    = 20
 PLAYER_SIZE        = 0.21
 PLAYER_HB_SCALE_X  = 0.38
 PLAYER_HB_SCALE_Y  = 0.88
-PLAYER_Y_RATIO     = 0.77
+PLAYER_Y_RATIO     = 0.7
 
 OBS_SIZE           = 0.29
 OBS_HB_SCALE_X     = 0.38
@@ -80,7 +80,7 @@ def run(screen, clock):
     last_field_surface   = None
     last_field_x = last_field_y = 0
 
-    font_score = pygame.font.SysFont(None, 40)
+    font_score = pygame.font.Font(resource_path("DejaVuSansMono-Bold.ttf"), 24)
 
     while running:
         dt     = clock.tick(60) / 1000.0
@@ -131,7 +131,7 @@ def run(screen, clock):
         if road_offset >= field_h:
             road_offset -= field_h
 
-        # trail (punten scrollen mee met de weg)
+        # trail
         for pt in trail:
             pt[1] += speed
         player_field_x = player_x - field_x
@@ -159,10 +159,13 @@ def run(screen, clock):
             pygame.draw.line(line_surf, (200, 200, 255, speed_alpha), (field_w - 4, y_base), (field_w - 4, y_base + line_len), SPEED_LINE_WIDTH)
         field_surface.blit(line_surf, (0, 0))
 
-        # spawn (altijd minstens 1 vrije lane)
+        # spawn — genoeg ruimte zodat motor er altijd tussen past op de y-as
+        obs_h = int(field_h * OBS_SIZE)
+        obs_w = obs_h
         spawn_timer += speed
         if spawn_timer > spawn_distance:
-            safety_margin = player_h * 3
+            # safety_margin = 1 motor hoogte + 1 obstacle hoogte + extra marge
+            safety_margin = player_h + obs_h + int(field_h * 0.08)
             occupied   = {obs.lane_index for obs in obstacles if obs.y < player_field_y + safety_margin}
             free_lanes = [l for l in range(3) if l not in occupied]
             if len(free_lanes) == 0:
@@ -171,8 +174,6 @@ def run(screen, clock):
                 lane_index          = random.choice(free_lanes)
                 obstacle_img        = random.choice([genera.auto_b, genera.auto_g, genera.auto_p, genera.auto_r,
                                                      genera.truck_b, genera.truck_g, genera.truck_p, genera.truck_r])
-                obs_h               = int(field_h * OBS_SIZE)
-                obs_w               = obs_h
                 obstacle_img_scaled = pygame.transform.scale(obstacle_img, (obs_w, obs_h))
                 lane_center_x       = lane_width * lane_index + lane_width // 2
                 obs_start_x         = lane_center_x - obs_w // 2
@@ -210,7 +211,6 @@ def run(screen, clock):
             field_surface.blit(obstacle.image, (obstacle.x, int(obstacle.y)))
 
         # player
-        player_rect_field = pygame.Rect(int(player_field_x), player_field_y, player_w, player_h)
         hb_w = int(player_w * PLAYER_HB_SCALE_X)
         hb_h = int(player_h * PLAYER_HB_SCALE_Y)
         hitbox_field = pygame.Rect(anchor_x_field - hb_w // 2, player_field_y + (player_h - hb_h) // 2, hb_w, hb_h)
@@ -270,7 +270,7 @@ def run(screen, clock):
         else:
             font_size = 28
 
-        font_mult = pygame.font.SysFont(None, font_size)
+        font_mult = pygame.font.Font(resource_path("DejaVuSansMono-Bold.ttf"), font_size)
         mult_surf = font_mult.render(f"x{multiplier:.2f}", True, (255, 220, 0))
         screen.blit(mult_surf, mult_surf.get_rect(centerx=field_x + anchor_x_field, bottom=field_y + player_field_y - 4))
 
