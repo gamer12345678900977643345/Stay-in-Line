@@ -53,7 +53,7 @@ def run(screen, clock):
     road_offset    = 0.0
     obstacles      = []
     spawn_timer    = 0
-    spawn_distance = 350
+    spawn_distance = 450
     motor_base     = genera.motor_pic
 
     motor_channel = pygame.mixer.Channel(2)
